@@ -67,9 +67,64 @@ model_list:
       api_key: "os.environ/GEMINI_API_KEY"
 
   # ---------------------------------------------------------------------------
+  # DeepSeek — direct API, very cheap, strong at coding and reasoning
+  # Set DEEPSEEK_API_KEY in .env — get one at https://platform.deepseek.com/
+  #
+  # deepseek-v4-pro   → full model, 1M context, thinking + non-thinking mode
+  # deepseek-v4-flash → fast and cheap, same dual-mode support
+  # ---------------------------------------------------------------------------
+
+  - model_name: deepseek-v4-pro
+    litellm_params:
+      model: deepseek/deepseek-v4-pro
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+
+  - model_name: deepseek-v4-flash
+    litellm_params:
+      model: deepseek/deepseek-v4-flash
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+
+  # ---------------------------------------------------------------------------
+  # Claude Code model mapping — DeepSeek routing
+  #
+  # When Claude Code is pointed at this proxy (via ANTHROPIC_BASE_URL),
+  # it still requests models by their Claude names. These entries intercept
+  # those names and silently route them to DeepSeek instead.
+  #
+  # Mapping logic:
+  #   Opus  + Sonnet → deepseek-v4-pro  (thinking mode, high effort)
+  #   Haiku + agents → deepseek-v4-flash (fast, cheap, for sub-tasks)
+  #
+  # Only active when ANTHROPIC_BASE_URL=http://localhost:4000 is set.
+  # Without that env var, Claude Code bypasses this proxy entirely.
+  # ---------------------------------------------------------------------------
+
+  - model_name: claude-opus-4-7
+    litellm_params:
+      model: deepseek/deepseek-v4-pro
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+      thinking:
+        type: enabled
+        budget_tokens: 15000
+
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: deepseek/deepseek-v4-pro
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+      thinking:
+        type: enabled
+        budget_tokens: 15000
+
+  - model_name: claude-haiku-4-5-20251001
+    litellm_params:
+      model: deepseek/deepseek-v4-flash
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+
+  # ---------------------------------------------------------------------------
   # OpenRouter — access to hundreds of models with one API key
   # Set OPENROUTER_API_KEY in .env to enable
-  # Great for trying out less common models (Mistral, LLaMA, etc.)
+  # Note: ~5-10% cost markup vs going direct to the provider
+  # Use only for models not available directly elsewhere
   # ---------------------------------------------------------------------------
 
   - model_name: openrouter/deepseek-r1
