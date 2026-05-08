@@ -67,9 +67,34 @@ model_list:
       api_key: "os.environ/GEMINI_API_KEY"
 
   # ---------------------------------------------------------------------------
-  # OpenRouter — access to hundreds of models with one API key
+  # Groq — free tier, very fast inference for open-source models
+  # Set GROQ_API_KEY in .env — get one at https://console.groq.com/keys
+  # ---------------------------------------------------------------------------
+
+  - model_name: llama-4-scout
+    litellm_params:
+      model: groq/meta-llama/llama-4-scout-17b-16e-instruct
+      api_key: "os.environ/GROQ_API_KEY"
+
+  - model_name: llama-3.3
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: "os.environ/GROQ_API_KEY"
+
+  - model_name: llama-3.1-fast
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: "os.environ/GROQ_API_KEY"
+
+  - model_name: gemma-3
+    litellm_params:
+      model: groq/gemma2-9b-it
+      api_key: "os.environ/GROQ_API_KEY"
+
+  # ---------------------------------------------------------------------------
+  # OpenRouter — use only for models not available directly elsewhere
   # Set OPENROUTER_API_KEY in .env to enable
-  # Great for trying out less common models (Mistral, LLaMA, etc.)
+  # Note: ~5-10% cost markup vs going direct to the provider
   # ---------------------------------------------------------------------------
 
   - model_name: openrouter/deepseek-r1
