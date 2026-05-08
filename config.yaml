@@ -90,6 +90,24 @@ litellm_settings:
   # Log level: DEBUG shows every request/response, INFO shows summaries only
   set_verbose: false
 
+  # ---------------------------------------------------------------------------
+  # Caching — avoids sending identical requests to providers twice
+  #
+  # How it works: LiteLLM hashes every request. If the same prompt comes in
+  # again, it returns the cached response instantly — no API call, no tokens.
+  #
+  # LITELLM_CACHE_TYPE controls which backend is used:
+  #   local → in-memory (default, works everywhere, cache lost on restart)
+  #   redis → Redis server (persistent, requires REDIS_URL to be set)
+  #
+  # Set LITELLM_CACHE_TYPE and REDIS_URL in your .env file.
+  # ---------------------------------------------------------------------------
+  cache: true
+  cache_params:
+    type: "os.environ/LITELLM_CACHE_TYPE"
+    redis_url: "os.environ/REDIS_URL"       # only used when type=redis
+    ttl: 3600                               # cache entries expire after 1 hour
+
 general_settings:
   # Master key: used by your apps to authenticate with this proxy.
   # Think of it as a password for the proxy itself — read from .env.
@@ -98,6 +116,13 @@ general_settings:
   # How long to wait for a provider to respond before giving up (seconds)
   request_timeout: 600
 
-  # Store spend/usage data in a local SQLite database
-  # Useful for tracking which models you use most
-  store_model_in_db: false
+  # ---------------------------------------------------------------------------
+  # Database — stores spend tracking, virtual keys, and dashboard users
+  #
+  # Uses a local SQLite file (no installation needed).
+  # The file is created automatically on first start.
+  #
+  # DATABASE_URL format for SQLite: "sqlite:///./litellm.db"
+  # For home setup with PostgreSQL: "postgresql://user:pass@localhost/litellm"
+  # ---------------------------------------------------------------------------
+  database_url: "os.environ/DATABASE_URL"
