@@ -1,0 +1,37 @@
+# CI — runs on every push and pull request
+#
+# What this checks:
+#   1. Dependencies install cleanly from scratch (uv sync)
+#   2. config.yaml is valid YAML (catches typos before they reach prod)
+#
+# It does NOT call any AI provider APIs — no keys needed, no cost.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install:
+    name: Install & validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --frozen
+        # --frozen means: fail if uv.lock is out of sync with pyproject.toml
+        # This ensures the lockfile is always committed and up to date
+
+      - name: Validate config.yaml
+        run: uv run python -c "import yaml, sys; yaml.safe_load(open('config.yaml')); print('config.yaml is valid')"
