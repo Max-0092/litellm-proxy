@@ -1,5 +1,9 @@
 # litellm-proxy
 
+[![CI](https://github.com/Max-0092/litellm-proxy/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-0092/litellm-proxy/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+
 A locally-hosted [LiteLLM](https://github.com/BerriAI/litellm) proxy that provides a single, unified API endpoint for multiple AI providers (Anthropic, OpenAI, Google Gemini, OpenRouter, and more).
 
 Instead of configuring API keys and provider-specific SDKs in every project, all your apps point to `http://localhost:4000` and this proxy handles routing, authentication, and provider differences.
@@ -159,3 +163,37 @@ To start Redis automatically when WSL starts, add the `podman start litellm-redi
 ```powershell
 .\scripts\uninstall-autostart.ps1
 ```
+
+## Troubleshooting
+
+**Proxy won't start — `UnicodeEncodeError`**
+Windows terminal encoding issue. The start script sets `PYTHONUTF8=1` automatically. If you start the proxy manually, set it first:
+```powershell
+$env:PYTHONUTF8 = "1"
+uv run litellm --config config.yaml --port 4000
+```
+
+**`authentication error: not connected to db`**
+The dashboard requires `DATABASE_URL` to be set. Make sure your `.env` contains:
+```
+DATABASE_URL=sqlite:///./litellm.db
+```
+
+**Windows Firewall prompt on startup**
+Click **Cancel** — the proxy only listens on `localhost` and does not need firewall access.
+
+**Port 4000 already in use**
+Another process is using the port. Find and stop it:
+```powershell
+netstat -ano | findstr :4000
+Stop-Process -Id <PID>
+```
+
+**`claude-ds` command not found**
+The PowerShell profile hasn't been loaded yet. Run:
+```powershell
+. C:\Users\<you>\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+```
+
+**Provider returns 401 Unauthorized**
+The API key for that provider is missing or incorrect in `.env`. Run `.\scripts\health-check.ps1` to see which providers are failing.
