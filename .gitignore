@@ -5,7 +5,6 @@
 .venv/
 __pycache__/
 *.pyc
-.python-version
 
 # LiteLLM runtime files
 litellm_proxy_budget.db
