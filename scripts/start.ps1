@@ -15,7 +15,7 @@ if (Test-Path $envFile) {
     }
     Write-Host "[litellm-proxy] Loaded environment from .env" -ForegroundColor Green
 } else {
-    Write-Warning ".env file not found — copy .env.example to .env and fill in your API keys"
+    Write-Warning ".env file not found - copy .env.example to .env and fill in your API keys"
     exit 1
 }
 
@@ -23,6 +23,10 @@ $configFile = Join-Path $repoRoot "config.yaml"
 
 Write-Host "[litellm-proxy] Starting on http://localhost:4000 ..." -ForegroundColor Cyan
 Write-Host "[litellm-proxy] Press Ctrl+C to stop`n" -ForegroundColor Cyan
+
+# Force UTF-8 output — prevents UnicodeEncodeError from LiteLLM's banner
+# on Windows terminals that default to cp1252 encoding
+$env:PYTHONUTF8 = "1"
 
 # uv run ensures the proxy runs inside the project's virtual environment
 Set-Location $repoRoot
