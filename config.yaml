@@ -105,7 +105,7 @@ model_list:
       api_key: "os.environ/DEEPSEEK_API_KEY"
       thinking:
         type: enabled
-        budget_tokens: 10000      # max tokens DeepSeek may use for reasoning
+        budget_tokens: 15000
 
   - model_name: claude-sonnet-4-6
     litellm_params:
@@ -113,7 +113,7 @@ model_list:
       api_key: "os.environ/DEEPSEEK_API_KEY"
       thinking:
         type: enabled
-        budget_tokens: 8000
+        budget_tokens: 15000
 
   - model_name: claude-haiku-4-5-20251001
     litellm_params:
