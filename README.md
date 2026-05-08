@@ -118,7 +118,41 @@ claude --model claude-haiku
 
 ## Configuration
 
-All model routing is defined in `config.yaml`. The proxy reads API keys from `.env` at startup — changes to `.env` require a restart.
+All model routing is defined in `config.yaml`. The proxy reads API keys and settings from `.env` at startup — changes to `.env` require a restart.
+
+## Caching
+
+Caching prevents identical requests from hitting the provider API twice, saving tokens and latency.
+
+| Environment | `LITELLM_CACHE_TYPE` | Requires |
+|---|---|---|
+| Work (no admin rights) | `local` | Nothing — in-memory, lost on restart |
+| Home (WSL + Podman) | `redis` | Redis running, `REDIS_URL` set |
+
+## Home setup (WSL + Podman)
+
+On a machine with WSL and Podman available, you can run Redis as a container for persistent caching:
+
+```bash
+# Start Redis container (runs in background, auto-restarts)
+podman run -d \
+  --name litellm-redis \
+  --restart always \
+  -p 6379:6379 \
+  redis:alpine
+
+# Verify it's running
+podman ps
+```
+
+Then set these values in your `.env`:
+```
+LITELLM_CACHE_TYPE=redis
+REDIS_URL=redis://localhost:6379
+DATABASE_URL=sqlite:///./litellm.db
+```
+
+To start Redis automatically when WSL starts, add the `podman start litellm-redis` command to your `~/.bashrc` or use a systemd user service.
 
 ## Removing autostart
 
