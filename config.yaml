@@ -1,0 +1,103 @@
+# LiteLLM Proxy Configuration
+# ============================
+# This file defines which AI models are available through the proxy.
+# The proxy exposes an OpenAI-compatible API on http://localhost:4000
+#
+# How it works:
+#   Your app calls  → localhost:4000  (using the model_name below)
+#   LiteLLM routes  → the actual provider (Anthropic, OpenAI, etc.)
+#
+# API keys are read from the .env file — never put keys directly here.
+
+model_list:
+
+  # ---------------------------------------------------------------------------
+  # Anthropic — Claude models
+  # Set ANTHROPIC_API_KEY in .env to enable
+  # ---------------------------------------------------------------------------
+
+  - model_name: claude-sonnet          # alias you use in your apps
+    litellm_params:
+      model: anthropic/claude-sonnet-4-5
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+
+  - model_name: claude-opus
+    litellm_params:
+      model: anthropic/claude-opus-4-5
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+
+  - model_name: claude-haiku
+    litellm_params:
+      model: anthropic/claude-haiku-4-5-20251001
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+
+  # ---------------------------------------------------------------------------
+  # OpenAI — GPT models
+  # Set OPENAI_API_KEY in .env to enable
+  # ---------------------------------------------------------------------------
+
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: "os.environ/OPENAI_API_KEY"
+
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: "os.environ/OPENAI_API_KEY"
+
+  - model_name: o3
+    litellm_params:
+      model: openai/o3
+      api_key: "os.environ/OPENAI_API_KEY"
+
+  # ---------------------------------------------------------------------------
+  # Google — Gemini models
+  # Set GEMINI_API_KEY in .env to enable
+  # ---------------------------------------------------------------------------
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash
+      api_key: "os.environ/GEMINI_API_KEY"
+
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-2.0-pro-exp
+      api_key: "os.environ/GEMINI_API_KEY"
+
+  # ---------------------------------------------------------------------------
+  # OpenRouter — access to hundreds of models with one API key
+  # Set OPENROUTER_API_KEY in .env to enable
+  # Great for trying out less common models (Mistral, LLaMA, etc.)
+  # ---------------------------------------------------------------------------
+
+  - model_name: openrouter/deepseek-r1
+    litellm_params:
+      model: openrouter/deepseek/deepseek-r1
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+  - model_name: openrouter/llama-4-maverick
+    litellm_params:
+      model: openrouter/meta-llama/llama-4-maverick
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+# ---------------------------------------------------------------------------
+# General proxy settings
+# ---------------------------------------------------------------------------
+
+litellm_settings:
+  # Log level: DEBUG shows every request/response, INFO shows summaries only
+  set_verbose: false
+
+general_settings:
+  # Master key: used by your apps to authenticate with this proxy.
+  # Think of it as a password for the proxy itself — read from .env.
+  master_key: "os.environ/LITELLM_MASTER_KEY"
+
+  # How long to wait for a provider to respond before giving up (seconds)
+  request_timeout: 600
+
+  # Store spend/usage data in a local SQLite database
+  # Useful for tracking which models you use most
+  store_model_in_db: false

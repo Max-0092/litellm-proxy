@@ -1,0 +1,12 @@
+[project]
+name = "litellm-proxy"
+version = "0.1.0"
+description = "Local LiteLLM proxy — unified API gateway for multiple AI providers"
+requires-python = ">=3.11"
+
+dependencies = [
+    "litellm[proxy]>=1.57.0",
+]
+
+[dependency-groups]
+dev = []
